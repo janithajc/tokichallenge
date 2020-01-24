@@ -37,7 +37,6 @@ public class FlightServiceImpl implements FlightService {
     List<ReturnFlight> returnFlights = new ArrayList<>();
 
     return allFlights.collectList().flatMapMany(flights -> {
-      System.out.println(flights);
       flights.forEach(f1 ->
         flights.forEach(f2 -> {
           if(f1.getArrival().equals(f2.getDeparture()) &&
