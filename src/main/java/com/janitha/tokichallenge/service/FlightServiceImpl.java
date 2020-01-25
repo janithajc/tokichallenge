@@ -10,9 +10,7 @@ import org.springframework.web.reactive.function.client.ClientResponse;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class FlightServiceImpl implements FlightService {
@@ -34,7 +32,7 @@ public class FlightServiceImpl implements FlightService {
 
     Flux<Flight> allFlights = cheapFlights.mergeWith(businessFlights);
 
-    List<ReturnFlight> returnFlights = new ArrayList<>();
+    Map<Flight, Set<Flight>> returnFlights = new HashMap<>();
 
     return allFlights.collectList().flatMapMany(flights -> {
       flights.forEach(f1 ->
@@ -42,11 +40,14 @@ public class FlightServiceImpl implements FlightService {
           if(f1.getArrival().equals(f2.getDeparture()) &&
               f1.getDeparture().equals(f2.getArrival()) &&
               f1.getArrivalTime() < f2.getDepartureTime()) {
-            ReturnFlight returnFlight = new ReturnFlight(f1, f2);
-            returnFlights.add(returnFlight);
+            returnFlights.putIfAbsent(f1, new HashSet<>());
+            returnFlights.get(f1).add(f2);
           }
         }));
-      return Flux.fromStream(returnFlights.stream());
+
+      return Flux.fromStream(returnFlights
+          .keySet().stream()
+          .map(flight -> new ReturnFlight(flight, returnFlights.get(flight))));
     });
   }
 

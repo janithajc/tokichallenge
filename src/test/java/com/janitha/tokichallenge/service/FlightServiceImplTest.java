@@ -26,9 +26,6 @@ public class FlightServiceImplTest {
     ApiResponse mockApiResponse = mock(ApiResponse.class);
     CheapApiResponse mockCheapApiResponse = mock(CheapApiResponse.class);
 
-    // Possible return flights
-    // bf1 -> bf2, bf1 -> cf2, bf2 -> cf2, cf1 -> cf2
-
     Flight[] mockFlights = getMockFlights();
     CheapFlight[] mockCheapFlights = getMockCheapFlights();
 
@@ -39,10 +36,17 @@ public class FlightServiceImplTest {
     when(mockRes.bodyToMono(CheapApiResponse.class)).thenReturn(Mono.just(mockCheapApiResponse));
 
     when(httpService.get(any())).thenReturn(Mono.just(mockRes));
-    List<ReturnFlight> returnFlightList = flightService.getReturnFlights().collectList().block();
+    List<ReturnFlight> returnFlightList = flightService.getReturnFlights().collectSortedList().block();
 
     assertNotNull(returnFlightList);
-    assertEquals(4, returnFlightList.size());
+
+    // Possible return flights
+    // bf1 -> bf2, cf2
+    // bf2 -> cf2
+    // cf1 -> cf2
+
+    assertEquals(3, returnFlightList.size());
+    assertEquals(2, returnFlightList.get(0).getReturning().size());
 
   }
 
