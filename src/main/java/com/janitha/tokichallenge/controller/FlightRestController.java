@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(path = "/flights", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(path = "/api/v1/flights", produces = MediaType.APPLICATION_JSON_VALUE)
 public class FlightRestController {
 
   private final FlightService flightService;
@@ -26,6 +26,6 @@ public class FlightRestController {
 
   @GetMapping("/return")
   Publisher<ReturnFlight> returnFlights() {
-    return this.flightService.getReturnFlights();
+    return this.flightService.getReturnFlights().sort();
   }
 }
