@@ -35,6 +35,13 @@ mvn test
 mvn spring-boot:run
 ```
 
+## About the API
+
+```
+GET /api/v1/flights - Get all flights
+GET /api/v1/flights/return - Get the Return flights
+```
+
 ## Built With
 
 * [SpringBoot](https://spring.io/projects/spring-boot) - The web framework used
